@@ -6,6 +6,7 @@ import pandas as pd
 import datetime
 from bs4 import BeautifulSoup
 import requests
+from multiprocessing.pool import ThreadPool
 
 
 class RedditCollector:
@@ -83,7 +84,7 @@ class RedditCollector:
 
             self.save_data(subreddit=subreddit_name)
             print("Downloading Images")
-            self.download_images(subreddit)
+        self.download_images(subreddit)
 
     def save_data(self, subreddit):
         print('>>> Writing ', subreddit, ' data to disk... \n\n')
@@ -203,42 +204,16 @@ class RedditCollector:
             csv = dataframe.to_csv(others_path, index=True, header=True)
 
     def download_images(self, subreddit):
-
+        print("DOWNLOADING IMAGES")
         for link in self.image_urls:
-            a = link.decode('ASCII')
-            # print(a)
-            # print("is the data type!")
-        # r = requests.get(a, allow_redirects = True)
-        print("SAVING FILES TO DISK>>>")
-        # this naming part works
-        if a.endswith(".jpg"):
-            for title in self.image_titles:
-                z = title.decode('ASCII')
-                # z = title.append(".jpg")
-                r = requests.get(a, allow_redirects=True)
-                open(z, "wb").write(r.content)
-
-        elif a.endswith(".jpeg"):
-            for title in self.image_titles:
-                z = title.decode('ASCII')
-                # z = title.append(".jpeg")
-                r = requests.get(a, allow_redirects=True)
-                open(z, "wb").write(r.content)
-        elif a.endswith(".png"):
-            for title in self.image_titles:
-                z = title.decode('ASCII')
-                # z = title.append(".png")
-                r = requests.get(a, allow_redirects=True)
-                open(z, "wb").write(r.content)
-        elif a.endswith(".gif"):
-            for title in self.image_titles:
-                z = title.decode('ASCII')
-                # z = title.append(".gif")
-                r = requests.get(a, allow_redirects=True)
-                open(z, "wb").write(r.content)
+            print("download the file")
+            my_url=link.decode('ASCII')
+            for filename in self.image_titles:
+                r = requests.get(my_url, allow_redirects=True)
+                file = open(filename, 'wb').write(r.content)
 
 
-""
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='A script to collect images/gifs from reddit')
     parser.add_argument('--client_id', action='store', dest='client_id', help='your reddit app client id',
@@ -262,6 +237,3 @@ if __name__ == "__main__":
                                      username=args.username,
                                      password=args.password)
     data_collector.collect_data()
-
-
-

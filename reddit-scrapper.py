@@ -205,12 +205,18 @@ class RedditCollector:
 
     def download_images(self, subreddit):
         print("DOWNLOADING IMAGES")
-        for link in self.image_urls:
-            print("download the file")
-            my_url=link.decode('ASCII')
-            for filename in self.image_titles:
-                r = requests.get(my_url, allow_redirects=True)
-                file = open(filename, 'wb').write(r.content)
+        for file in self.image_titles:
+            # print("download the file")
+            file_name = file.decode('utf-8')
+            for link in self.image_urls:
+                image_link = link.decode('utf-8')
+                outfile = open(file_name, 'w')
+                outfile.write(urllib.request.urlopen(image_link).read())
+                outfile.close()
+
+
+
+
 
 
 
